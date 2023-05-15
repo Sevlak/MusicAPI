@@ -1,4 +1,5 @@
-﻿using API.Models;
+﻿using API.Data.Contexts;
+using API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
@@ -29,7 +30,9 @@ namespace API.Data
 
         public async Task<IAsyncEnumerable<Music>> GetAllMusics()
         {
-            return _context.Musics.AsAsyncEnumerable();
+            //We prevent the context from  unnecessarily tracking the data because it is intended for read-only use.
+            //https://www.learnentityframeworkcore.com/walkthroughs/aspnetcore-application
+            return _context.Musics.AsNoTracking().AsAsyncEnumerable();
         }
 
         public async Task<Music> UpdateMusic(Music m)
