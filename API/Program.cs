@@ -1,6 +1,5 @@
-
-using API.Controllers;
 using API.Data;
+using API.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 namespace API;
