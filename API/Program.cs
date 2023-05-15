@@ -1,6 +1,8 @@
 using API.Data;
 using API.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 
 namespace API;
 
@@ -19,10 +21,19 @@ public class Program
         
         builder.Services.AddTransient<IMusicRepository, MusicRepository>();
         
-        
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        
+        //TimeSpan is not described properly on OpenAPI document
+        //https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2505
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.MapType<TimeSpan>(() => new OpenApiSchema
+            {
+                Type = "string",
+                Example = new OpenApiString("00:00:00")
+            });
+        });
 
         var app = builder.Build();
 
