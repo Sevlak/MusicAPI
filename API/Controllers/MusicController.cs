@@ -56,14 +56,16 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Music>> UpdateMusic(int id, Music m)
         {
             Music ms = await _repository.GetMusic(id);
             if (ms == null)
             {
-                return NotFound();
+                Music newMusic = await _repository.CreateMusic(m); 
                 
+                return CreatedAtAction(nameof(GetMusicById), new {id = newMusic.Id}, newMusic);
             }
             await _repository.UpdateMusic(m);
             
@@ -71,6 +73,8 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Music>> DeleteMusic(int id)
         {
             Music ms = await _repository.GetMusic(id);
