@@ -5,12 +5,8 @@ namespace API.Models
     public class Music
     {
         public int Id { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public TimeSpan Duration { get; set; }
-        [Required]
-        public Artist Artist { get; set; }
-        public Album Album { get; set; }
+        [Required] public string Name { get; set; }
+        [Required] public TimeSpan Duration { get; set; }
+        [Required] public Album Album { get; set; }
     }
 }
