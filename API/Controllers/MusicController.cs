@@ -8,10 +8,10 @@ namespace API.Controllers
     [Route("[controller]")]
     public class MusicController: ControllerBase
     {
-        private readonly IMusicRepository _repository;
+        private readonly IRepository<Music> _repository;
         private readonly ILogger<MusicController> _logger;
         
-        public MusicController(ILogger<MusicController> logger, IMusicRepository repo)
+        public MusicController(ILogger<MusicController> logger, IRepository<Music> repo)
         {
             _logger = logger;
             _repository = repo;
@@ -27,7 +27,7 @@ namespace API.Controllers
                 return Conflict(); //TODO: Search if this status code is correct. Shouldn't this be 422 Unprocessable Entity?
             }
 
-            await _repository.CreateMusic(m);
+            await _repository.Create(m);
             
             return CreatedAtAction(nameof(GetMusicById), new { id = m.Id }, m);
         }
@@ -37,7 +37,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<Music>> GetMusicById(int id)
         {
-            Music m = await _repository.GetMusic(id);
+            Music m = await _repository.Get(id);
             if (m == null)
             {
                 return NotFound();
@@ -52,7 +52,7 @@ namespace API.Controllers
         {
             //TODO: Don't know if I'm using the IAsyncEnumerable correctly. There's some tips on 
             //  https://stackoverflow.com/questions/62731425/how-to-use-iasyncenumerable-in-repository-class   
-            return Ok(await _repository.GetAllMusics());
+            return Ok(await _repository.GetAll());
         }
 
         [HttpPut("{id}")]
@@ -60,14 +60,14 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Music>> UpdateMusic(int id, Music m)
         {
-            Music ms = await _repository.GetMusic(id);
+            Music ms = await _repository.Get(id);
             if (ms == null)
             {
-                Music newMusic = await _repository.CreateMusic(m); 
+                Music newMusic = await _repository.Create(m); 
                 
                 return CreatedAtAction(nameof(GetMusicById), new {id = newMusic.Id}, newMusic);
             }
-            await _repository.UpdateMusic(m);
+            await _repository.Update(m);
             
             return NoContent();
         }
@@ -77,13 +77,13 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<ActionResult<Music>> DeleteMusic(int id)
         {
-            Music ms = await _repository.GetMusic(id);
+            Music ms = await _repository.Get(id);
             if (ms == null)
             {
                 return NotFound();
             }
 
-            await _repository.DeleteMusic(ms);
+            await _repository.Delete(ms);
 
             return NoContent();
         }

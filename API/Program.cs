@@ -1,5 +1,6 @@
 using API.Data;
 using API.Data.Contexts;
+using API.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -19,7 +20,7 @@ public class Program
         builder.Services.AddDbContext<MusicContext>(opt => 
             opt.UseSqlite(builder.Configuration.GetConnectionString("APIDb")));
         
-        builder.Services.AddTransient<IMusicRepository, MusicRepository>();
+        builder.Services.AddTransient<IRepository<Music>, MusicRepository>();
         
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
