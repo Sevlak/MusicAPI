@@ -21,9 +21,13 @@ namespace API.Data
             return m;
         }
 
-        public async Task<Music> GetMusic(int Id)
+        public async Task<Music> GetMusic(int id)
         {
-            var m = await _context.Musics.FindAsync(Id);
+            var m = await _context.Musics
+                .Include(music => music.Album)
+                .Include(music => music.Album.Artist)
+                .Where(music => music.Id == id)
+                .SingleOrDefaultAsync();
 
             return m;
         }
@@ -32,7 +36,11 @@ namespace API.Data
         {
             //We prevent the context from  unnecessarily tracking the data because it is intended for read-only use.
             //https://www.learnentityframeworkcore.com/walkthroughs/aspnetcore-application
-            return _context.Musics.AsNoTracking().AsAsyncEnumerable();
+            return _context.Musics
+                .AsNoTracking()
+                .Include(music => music.Album)
+                .Include(music => music.Album.Artist)
+                .AsAsyncEnumerable();
         }
 
         public async Task<Music> UpdateMusic(Music m)
