@@ -4,3 +4,5 @@
 /API.Tests/bin
 /API.Tests/obj
 /API/Music.db
+/API/Music.db-shm
+/API/Music.db-wal
