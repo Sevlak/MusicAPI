@@ -1,10 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using API.Models.DTO;
 
 namespace API.Models
 {
-    public class Artist
+    public class Artist: IDtoConvertible<ArtistDto>
     {
         public int Id { get; set; }
-        [Required] public string Name { get; set; }
+        public string Name { get; set; }
+
+        public ArtistDto Map()
+        {
+            return new ArtistDto()
+            {
+                Name = this.Name
+            };
+        }
     }
 }

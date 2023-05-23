@@ -19,6 +19,8 @@
 
   <ItemGroup>
     <Compile Remove="Models\Music.csd.cs" />
+    <Compile Remove="Models\DTO\DTOConvert.cs" />
+    <Compile Remove="Models\DTO\IConvertible.cs" />
   </ItemGroup>
 
 </Project>
