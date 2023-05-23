@@ -1,5 +1,6 @@
 ﻿using API.Data;
 using API.Models;
+using API.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -18,18 +19,12 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType( StatusCodes.Status201Created)]
-        public async Task<ActionResult<Music>> CreateMusic(Music m)
+        public async Task<ActionResult<Music>> CreateMusic(MusicDto m)
         {
-            if (m.Id != 0) //New music shouldn't have an Id
-            {
-                return Conflict(); //TODO: Search if this status code is correct. Shouldn't this be 422 Unprocessable Entity?
-            }
-
-            await _repository.Create(m);
-            
-            return CreatedAtAction(nameof(GetMusicById), new { id = m.Id }, m);
+            var model = m.Map();
+            await _repository.Create(model);
+            return CreatedAtAction(nameof(GetMusicById), new { id = model.Id }, model);
         }
         
         [HttpGet("{id}")]
@@ -43,7 +38,7 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            return m;
+            return Ok(m);
         }
         
         [HttpGet]
@@ -58,16 +53,17 @@ namespace API.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<Music>> UpdateMusic(int id, Music m)
+        public async Task<ActionResult<Music>> UpdateMusic(int id, MusicDto m)
         {
             Music ms = await _repository.Get(id);
             if (ms == null)
             {
-                Music newMusic = await _repository.Create(m); 
+                Music newMusic = await _repository.Create(m.Map()); 
                 
                 return CreatedAtAction(nameof(GetMusicById), new {id = newMusic.Id}, newMusic);
             }
-            await _repository.Update(m);
+            
+            await _repository.Update(m.Map());
             
             return NoContent();
         }
